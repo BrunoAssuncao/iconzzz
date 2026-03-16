@@ -38,12 +38,20 @@
         <section class="editor-columns">
           <article class="panel editor-panel">
             <h2>16×16 Editor</h2>
-            <canvas class="editor-canvas" id="canvas16" width="16" height="16" aria-label="16 by 16 icon editor"></canvas>
+            <div class="editor-stage" id="stage16">
+              <div class="checkerboard" aria-hidden="true"></div>
+              <div class="pixel-grid" aria-hidden="true"></div>
+              <canvas class="editor-canvas" id="canvas16" width="16" height="16" aria-label="16 by 16 icon editor"></canvas>
+            </div>
           </article>
 
           <article class="panel editor-panel">
             <h2>32×32 Editor</h2>
-            <canvas class="editor-canvas" id="canvas32" width="32" height="32" aria-label="32 by 32 icon editor"></canvas>
+            <div class="editor-stage" id="stage32">
+              <div class="checkerboard" aria-hidden="true"></div>
+              <div class="pixel-grid" aria-hidden="true"></div>
+              <canvas class="editor-canvas" id="canvas32" width="32" height="32" aria-label="32 by 32 icon editor"></canvas>
+            </div>
           </article>
         </section>
 

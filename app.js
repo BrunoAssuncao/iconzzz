@@ -2,6 +2,8 @@ const CUSTOM_COLORS_KEY = "pixel-ico-custom-colors-v1";
 
 const canvas16 = document.getElementById("canvas16");
 const canvas32 = document.getElementById("canvas32");
+const stage16 = document.getElementById("stage16");
+const stage32 = document.getElementById("stage32");
 const preview16 = document.getElementById("preview16");
 const preview32 = document.getElementById("preview32");
 
@@ -108,27 +110,27 @@ function initialize() {
 }
 
 function enforceEditorCanvasDisplaySize() {
-  canvas16.style.width = "256px";
-  canvas16.style.height = "256px";
-  canvas32.style.width = "512px";
-  canvas32.style.height = "512px";
+  stage16.style.width = "256px";
+  stage16.style.height = "256px";
+  stage32.style.width = "512px";
+  stage32.style.height = "512px";
 }
 
 function syncEditorCanvasBackgroundScale() {
-  syncCanvasBackgroundScale(canvas16, 16);
-  syncCanvasBackgroundScale(canvas32, 32);
+  syncCanvasBackgroundScale(stage16, 16);
+  syncCanvasBackgroundScale(stage32, 32);
 }
 
-function syncCanvasBackgroundScale(canvas, size) {
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
+function syncCanvasBackgroundScale(stage, size) {
+  const width = stage.clientWidth;
+  const height = stage.clientHeight;
   if (!width || !height) return;
 
-  const pixelSize = width / size;
-  const checkerSize = Math.max(2, pixelSize / 2);
+  const pixelSize = Math.floor(width / size);
+  const checkerSize = 12;
 
-  canvas.style.setProperty("--pixel-size", `${pixelSize}px`);
-  canvas.style.setProperty("--checker-size", `${checkerSize}px`);
+  stage.style.setProperty("--pixel-size", `${pixelSize}px`);
+  stage.style.setProperty("--checker-size", `${checkerSize}px`);
 }
 
 function bindToolButtons() {
