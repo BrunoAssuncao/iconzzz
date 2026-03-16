@@ -4,12 +4,9 @@
   --panel-dark: #6f6f6f;
   --panel-light: #ffffff;
   --ink: #111;
-  --accent: #173d9f;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -36,14 +33,8 @@ body {
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
 }
-.title-bar h1 {
-  margin: 0;
-  font-size: 1.15rem;
-}
-.title-bar p {
-  margin: 0.2rem 0 0;
-  font-size: 0.8rem;
-}
+.title-bar h1 { margin: 0; font-size: 1.15rem; }
+.title-bar p { margin: 0.2rem 0 0; font-size: 0.8rem; }
 
 .panel {
   background: #d4d0c8;
@@ -71,8 +62,17 @@ input[type="color"] {
   padding: 0.3rem 0.5rem;
 }
 
-button:active {
+button:active,
+.tool-btn.selected {
   border-color: var(--panel-dark) var(--panel-light) var(--panel-light) var(--panel-dark);
+  background: #c8c3bb;
+}
+
+.grid-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
 }
 
 .workspace {
@@ -90,23 +90,26 @@ button:active {
 .editor-panel h2,
 .palette-panel h2,
 .preview-panel h2,
-.palette-panel h3 {
-  margin: 0 0 0.5rem;
-  font-size: 0.9rem;
-}
+.palette-panel h3 { margin: 0 0 0.5rem; font-size: 0.9rem; }
 
-.editor-panel canvas {
+.editor-canvas {
   display: block;
   image-rendering: pixelated;
   cursor: crosshair;
   border: 1px solid #000;
-  background-image:
-    linear-gradient(45deg, #dadada 25%, transparent 25%),
-    linear-gradient(-45deg, #dadada 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #dadada 75%),
-    linear-gradient(-45deg, transparent 75%, #dadada 75%);
-  background-size: 12px 12px;
-  background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+  background:
+    linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
+    repeating-conic-gradient(#f0f0f0 0% 25%, #dbdbdb 0% 50%) 0 0 / 16px 16px;
+  background-size: 16px 16px, 16px 16px, 16px 16px;
+}
+
+#canvas16 { width: 256px; height: 256px; }
+#canvas32 { width: 512px; height: 512px; }
+
+body.grid-off .editor-canvas {
+  background:
+    repeating-conic-gradient(#f0f0f0 0% 25%, #dbdbdb 0% 50%) 0 0 / 16px 16px;
 }
 
 .palette-grid {
@@ -129,10 +132,7 @@ button:active {
 }
 
 .palette-swatch.selected,
-.custom-swatch.selected {
-  outline: 2px solid #ff0;
-  outline-offset: 1px;
-}
+.custom-swatch.selected { outline: 2px solid #ff0; outline-offset: 1px; }
 
 .custom-controls {
   display: flex;
@@ -147,32 +147,38 @@ button:active {
   gap: 0.3rem;
 }
 
-.custom-swatch {
-  width: 100%;
-  aspect-ratio: 1 / 1;
+.custom-swatch { width: 100%; aspect-ratio: 1 / 1; }
+
+.tool-buttons {
+  display: flex;
+  gap: 0.35rem;
 }
 
-.preview-grid {
-  display: flex;
-  gap: 2rem;
+.tool-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  padding: 0;
 }
-.preview-grid label {
-  display: block;
-  font-size: 0.8rem;
-  margin-bottom: 0.35rem;
-}
+
+.preview-grid { display: flex; gap: 2rem; }
+.preview-grid label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
 .preview-grid canvas {
   border: 1px solid #000;
   image-rendering: pixelated;
   background: #fff;
 }
 
-.footer-note {
-  font-size: 0.8rem;
+.footer-note { font-size: 0.8rem; }
+
+@media (max-width: 1260px) {
+  #canvas32 { width: 384px; height: 384px; }
 }
 
 @media (max-width: 1024px) {
-  .workspace {
-    grid-template-columns: 1fr;
-  }
+  .workspace { grid-template-columns: 1fr; }
+  #canvas32 { width: 512px; height: 512px; max-width: 100%; max-height: 100%; }
 }

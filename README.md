@@ -11,6 +11,8 @@ A retro-style, browser-based pixel icon editor for creating `.ico` files with ex
 - Old-school 256-color palette (web-safe 216 + 40 grayscale shades).
 - 10 custom color slots with color picker.
 - Custom colors persisted to `localStorage`.
+- Tool buttons under the palette: pen, eraser, and bucket fill.
+- Toggleable pixel grid overlay for both editing canvases.
 - 100% live preview canvases for 16×16 and 32×32.
 - Direct ICO import/export (PNG-based ICO entries).
 - Optional PNG download for each size.

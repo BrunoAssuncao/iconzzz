@@ -1,4 +1,5 @@
 const CUSTOM_COLORS_KEY = "pixel-ico-custom-colors-v1";
+
 const canvas16 = document.getElementById("canvas16");
 const canvas32 = document.getElementById("canvas32");
 const preview16 = document.getElementById("preview16");
@@ -9,19 +10,19 @@ const ctx32 = canvas32.getContext("2d", { willReadFrequently: true });
 const pctx16 = preview16.getContext("2d");
 const pctx32 = preview32.getContext("2d");
 
-const toolSelect = document.getElementById("tool");
-const zoomSlider = document.getElementById("zoom");
-const zoomValue = document.getElementById("zoomValue");
 const paletteEl = document.getElementById("palette");
 const customPaletteEl = document.getElementById("customPalette");
 const customColorInput = document.getElementById("customColorInput");
 const saveCustomColorBtn = document.getElementById("saveCustomColorBtn");
 const customSlotSelect = document.getElementById("customSlotSelect");
+const toolButtons = document.getElementById("toolButtons");
+const gridToggle = document.getElementById("gridToggle");
 const importIcoInput = document.getElementById("importIcoInput");
 
 const state = {
   selectedColor: "#000000",
   drawing: false,
+  tool: "pen",
   customColors: loadCustomColors(),
 };
 
@@ -42,13 +43,19 @@ function initialize() {
 
   renderClassicPalette();
   renderCustomPalette();
-  setZoom(Number(zoomSlider.value));
+  bindToolButtons();
   bindEditor(canvas16, ctx16, 16);
   bindEditor(canvas32, ctx32, 32);
 
-  zoomSlider.addEventListener("input", (event) => {
-    const zoom = Number(event.target.value);
-    setZoom(zoom);
+  window.addEventListener("mouseup", () => {
+    state.drawing = false;
+  });
+  window.addEventListener("blur", () => {
+    state.drawing = false;
+  });
+
+  gridToggle.addEventListener("change", () => {
+    document.body.classList.toggle("grid-off", !gridToggle.checked);
   });
 
   document.getElementById("clear16").addEventListener("click", () => {
@@ -69,7 +76,7 @@ function initialize() {
 
   saveCustomColorBtn.addEventListener("click", () => {
     const slot = Number(customSlotSelect.value);
-    state.customColors[slot] = customColorInput.value;
+    state.customColors[slot] = normalizeHexColor(customColorInput.value);
     persistCustomColors();
     renderCustomPalette();
   });
@@ -95,23 +102,32 @@ function initialize() {
   updatePreview();
 }
 
-function setZoom(zoom) {
-  zoomValue.value = `${zoom}x`;
-  canvas16.style.width = `${16 * zoom}px`;
-  canvas16.style.height = `${16 * zoom}px`;
-  canvas32.style.width = `${32 * zoom}px`;
-  canvas32.style.height = `${32 * zoom}px`;
+function bindToolButtons() {
+  toolButtons.querySelectorAll(".tool-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.tool = button.dataset.tool;
+      toolButtons.querySelectorAll(".tool-btn").forEach((node) => node.classList.remove("selected"));
+      button.classList.add("selected");
+    });
+  });
 }
 
 function bindEditor(canvas, ctx, size) {
-  const paint = (event) => {
-    if (!state.drawing && event.type !== "mousedown") return;
-    const rect = canvas.getBoundingClientRect();
-    const x = Math.floor(((event.clientX - rect.left) / rect.width) * size);
-    const y = Math.floor(((event.clientY - rect.top) / rect.height) * size);
+  const applyTool = (event, isStart = false) => {
+    const { x, y } = getPixelCoordinates(canvas, event, size);
     if (x < 0 || y < 0 || x >= size || y >= size) return;
 
-    if (toolSelect.value === "eraser") {
+    if (state.tool === "bucket") {
+      if (isStart) {
+        floodFill(ctx, size, x, y, state.selectedColor);
+        updatePreview();
+      }
+      return;
+    }
+
+    if (!state.drawing && !isStart) return;
+
+    if (state.tool === "eraser") {
       ctx.clearRect(x, y, 1, 1);
     } else {
       ctx.fillStyle = state.selectedColor;
@@ -121,16 +137,75 @@ function bindEditor(canvas, ctx, size) {
   };
 
   canvas.addEventListener("mousedown", (event) => {
-    state.drawing = true;
-    paint(event);
+    if (state.tool !== "bucket") {
+      state.drawing = true;
+    }
+    applyTool(event, true);
   });
-  canvas.addEventListener("mousemove", paint);
+
+  canvas.addEventListener("mousemove", (event) => applyTool(event));
   canvas.addEventListener("mouseup", () => {
     state.drawing = false;
   });
   canvas.addEventListener("mouseleave", () => {
     state.drawing = false;
   });
+}
+
+function getPixelCoordinates(canvas, event, size) {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.floor(((event.clientX - rect.left) / rect.width) * size);
+  const y = Math.floor(((event.clientY - rect.top) / rect.height) * size);
+  return { x, y };
+}
+
+function floodFill(ctx, size, startX, startY, fillColor) {
+  const image = ctx.getImageData(0, 0, size, size);
+  const data = image.data;
+  const target = getPixel(data, size, startX, startY);
+  const replacement = hexToRgba(fillColor);
+
+  if (rgbaEqual(target, replacement)) return;
+
+  const stack = [[startX, startY]];
+
+  while (stack.length > 0) {
+    const [x, y] = stack.pop();
+    if (x < 0 || y < 0 || x >= size || y >= size) continue;
+
+    const current = getPixel(data, size, x, y);
+    if (!rgbaEqual(current, target)) continue;
+
+    setPixel(data, size, x, y, replacement);
+    stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+  }
+
+  ctx.putImageData(image, 0, 0);
+}
+
+function getPixel(data, size, x, y) {
+  const index = (y * size + x) * 4;
+  return [data[index], data[index + 1], data[index + 2], data[index + 3]];
+}
+
+function setPixel(data, size, x, y, rgba) {
+  const index = (y * size + x) * 4;
+  data[index] = rgba[0];
+  data[index + 1] = rgba[1];
+  data[index + 2] = rgba[2];
+  data[index + 3] = rgba[3];
+}
+
+function hexToRgba(hex) {
+  const normalized = hex.replace("#", "");
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return [r, g, b, 255];
+}
+
+function rgbaEqual(a, b) {
+  return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
 }
 
 function clearCanvas(ctx, size) {
@@ -223,12 +298,18 @@ function loadCustomColors() {
   try {
     const saved = JSON.parse(localStorage.getItem(CUSTOM_COLORS_KEY));
     if (Array.isArray(saved) && saved.length === 10) {
-      return saved;
+      return saved.map((color, index) => normalizeHexColor(color) || fallback[index]);
     }
   } catch {
     // ignore parsing errors and fallback to defaults
   }
   return fallback;
+}
+
+function normalizeHexColor(value) {
+  if (typeof value !== "string") return null;
+  const match = value.trim().toLowerCase().match(/^#([0-9a-f]{6})$/);
+  return match ? `#${match[1]}` : null;
 }
 
 function persistCustomColors() {
