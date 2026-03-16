@@ -47,6 +47,13 @@ function initialize() {
   bindEditor(canvas16, ctx16, 16);
   bindEditor(canvas32, ctx32, 32);
 
+  window.addEventListener("mouseup", () => {
+    state.drawing = false;
+  });
+  window.addEventListener("blur", () => {
+    state.drawing = false;
+  });
+
   gridToggle.addEventListener("change", () => {
     document.body.classList.toggle("grid-off", !gridToggle.checked);
   });
@@ -69,7 +76,7 @@ function initialize() {
 
   saveCustomColorBtn.addEventListener("click", () => {
     const slot = Number(customSlotSelect.value);
-    state.customColors[slot] = customColorInput.value;
+    state.customColors[slot] = normalizeHexColor(customColorInput.value);
     persistCustomColors();
     renderCustomPalette();
   });
@@ -291,12 +298,18 @@ function loadCustomColors() {
   try {
     const saved = JSON.parse(localStorage.getItem(CUSTOM_COLORS_KEY));
     if (Array.isArray(saved) && saved.length === 10) {
-      return saved;
+      return saved.map((color, index) => normalizeHexColor(color) || fallback[index]);
     }
   } catch {
     // ignore parsing errors and fallback to defaults
   }
   return fallback;
+}
+
+function normalizeHexColor(value) {
+  if (typeof value !== "string") return null;
+  const match = value.trim().toLowerCase().match(/^#([0-9a-f]{6})$/);
+  return match ? `#${match[1]}` : null;
 }
 
 function persistCustomColors() {
