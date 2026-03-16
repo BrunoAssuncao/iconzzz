@@ -120,10 +120,11 @@ function syncEditorCanvasBackgroundScale() {
 }
 
 function syncCanvasBackgroundScale(canvas, size) {
-  const rect = canvas.getBoundingClientRect();
-  if (!rect.width || !rect.height) return;
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  if (!width || !height) return;
 
-  const pixelSize = rect.width / size;
+  const pixelSize = width / size;
   const checkerSize = Math.max(2, pixelSize / 2);
 
   canvas.style.setProperty("--pixel-size", `${pixelSize}px`);
@@ -182,8 +183,16 @@ function bindEditor(canvas, ctx, size) {
 
 function getPixelCoordinates(canvas, event, size) {
   const rect = canvas.getBoundingClientRect();
-  const x = Math.floor(((event.clientX - rect.left) / rect.width) * size);
-  const y = Math.floor(((event.clientY - rect.top) / rect.height) * size);
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  if (!width || !height) {
+    return { x: -1, y: -1 };
+  }
+
+  const pointerX = event.clientX - rect.left - canvas.clientLeft;
+  const pointerY = event.clientY - rect.top - canvas.clientTop;
+  const x = Math.floor((pointerX / width) * size);
+  const y = Math.floor((pointerY / height) * size);
   return { x, y };
 }
 
