@@ -21,6 +21,19 @@ const toolButtons = document.getElementById("toolButtons");
 const gridToggle = document.getElementById("gridToggle");
 const importIcoInput = document.getElementById("importIcoInput");
 
+const CUSTOM_COLOR_HOTKEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+const TOOL_HOTKEYS = {
+  q: "pen",
+  w: "eraser",
+  e: "bucket",
+};
+
+const TOOL_TITLES = {
+  pen: "Pen",
+  eraser: "Eraser",
+  bucket: "Bucket",
+};
+
 const state = {
   selectedColor: "#000000",
   drawing: false,
@@ -46,6 +59,7 @@ function initialize() {
   renderClassicPalette();
   renderCustomPalette();
   bindToolButtons();
+  bindHotkeys();
   bindEditor(stage16, canvas16, ctx16, 16);
   bindEditor(stage32, canvas32, ctx32, 32);
 
@@ -135,12 +149,55 @@ function syncCanvasBackgroundScale(stage, size) {
 
 function bindToolButtons() {
   toolButtons.querySelectorAll(".tool-btn").forEach((button) => {
+    const tool = button.dataset.tool;
+    const hotkey = Object.keys(TOOL_HOTKEYS).find((key) => TOOL_HOTKEYS[key] === tool);
+    if (hotkey) {
+      button.title = `${TOOL_TITLES[tool]} (Hotkey '${hotkey}')`;
+    }
+
     button.addEventListener("click", () => {
-      state.tool = button.dataset.tool;
-      toolButtons.querySelectorAll(".tool-btn").forEach((node) => node.classList.remove("selected"));
-      button.classList.add("selected");
+      selectTool(button.dataset.tool);
     });
   });
+}
+
+function bindHotkeys() {
+  document.addEventListener("keydown", (event) => {
+    if (event.repeat) return;
+    if (isTypingTarget(event.target)) return;
+
+    const key = event.key.toLowerCase();
+    const customIndex = CUSTOM_COLOR_HOTKEYS.indexOf(key);
+    if (customIndex !== -1) {
+      selectCustomColorByIndex(customIndex);
+      event.preventDefault();
+      return;
+    }
+
+    const tool = TOOL_HOTKEYS[key];
+    if (tool) {
+      selectTool(tool);
+      event.preventDefault();
+    }
+  });
+}
+
+function isTypingTarget(target) {
+  return target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement;
+}
+
+function selectTool(tool) {
+  state.tool = tool;
+  toolButtons.querySelectorAll(".tool-btn").forEach((node) => {
+    node.classList.toggle("selected", node.dataset.tool === tool);
+  });
+}
+
+function selectCustomColorByIndex(index) {
+  const swatch = customPaletteEl.children.item(index);
+  const color = state.customColors[index];
+  if (!swatch || !color) return;
+  selectColor(color, swatch, ".palette-swatch, .custom-swatch");
 }
 
 function bindEditor(stage, canvas, ctx, size) {
@@ -284,7 +341,7 @@ function renderCustomPalette() {
     swatch.type = "button";
     swatch.className = "custom-swatch";
     swatch.style.background = color;
-    swatch.title = `Custom ${index + 1}: ${color}`;
+    swatch.title = `Custom${index + 1}: ${color} (Hotkey '${CUSTOM_COLOR_HOTKEYS[index]}')`;
     swatch.addEventListener("click", () => selectColor(color, swatch, ".palette-swatch, .custom-swatch"));
     customPaletteEl.append(swatch);
   });
