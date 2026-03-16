@@ -15,6 +15,10 @@ A retro-style, browser-based pixel icon editor for creating `.ico` files with ex
 - Direct ICO import/export (PNG-based ICO entries).
 - Optional PNG download for each size.
 
+## Try it
+
+https://brunoassuncao.github.io/iconzzz/
+
 ## Run locally
 
 Since this is a static app, any static server works:
@@ -24,21 +28,6 @@ python3 -m http.server 8080
 ```
 
 Then open `http://localhost:8080`.
-
-## GitHub Pages branch workflow
-
-If you prefer a dedicated `gh-pages` branch for hosting:
-
-```bash
-git switch --orphan gh-pages
-git rm -rf .
-cp -r /path/to/your/working/tree/* .
-git add .
-git commit -m "Deploy pixel ICO creator"
-git push -u origin gh-pages
-```
-
-Then set **Settings → Pages → Build and deployment → Deploy from a branch** and pick `gh-pages` / root.
 
 ## ICO compatibility note
 
