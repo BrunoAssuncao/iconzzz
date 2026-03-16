@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel ICO Creator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-window">
+      <header class="title-bar">
+        <h1>Pixel ICO Creator</h1>
+        <p>Old-school style editor for 16×16 + 32×32 icons</p>
+      </header>
+
+      <section class="toolbar panel">
+        <div class="controls-row">
+          <label class="grid-toggle" for="gridToggle">
+            <input id="gridToggle" type="checkbox" checked />
+            Show Grid
+          </label>
+
+          <button id="clear16" type="button">Clear 16×16</button>
+          <button id="clear32" type="button">Clear 32×32</button>
+          <button id="clearAll" type="button">Clear All</button>
+        </div>
+
+        <div class="controls-row">
+          <button id="importIcoBtn" type="button">Import ICO</button>
+          <input id="importIcoInput" type="file" accept=".ico" hidden />
+          <button id="exportIcoBtn" type="button">Export ICO</button>
+          <button id="downloadPng16Btn" type="button">PNG 16×16</button>
+          <button id="downloadPng32Btn" type="button">PNG 32×32</button>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <section class="editor-columns">
+          <article class="panel editor-panel">
+            <h2>16×16 Editor</h2>
+            <canvas class="editor-canvas" id="canvas16" width="16" height="16" aria-label="16 by 16 icon editor"></canvas>
+          </article>
+
+          <article class="panel editor-panel">
+            <h2>32×32 Editor</h2>
+            <canvas class="editor-canvas" id="canvas32" width="32" height="32" aria-label="32 by 32 icon editor"></canvas>
+          </article>
+        </section>
+
+        <aside class="panel palette-panel">
+          <h2>Palette (256 Classic)</h2>
+          <div id="palette" class="palette-grid" aria-label="Classic 256 color palette"></div>
+
+          <h3>Custom Colors (saved locally)</h3>
+          <div class="custom-controls">
+            <input id="customColorInput" type="color" value="#ff00ff" />
+            <button id="saveCustomColorBtn" type="button">Save to Slot</button>
+            <select id="customSlotSelect"></select>
+          </div>
+          <div id="customPalette" class="custom-grid" aria-label="Custom colors"></div>
+
+          <h3>Tools</h3>
+          <div id="toolButtons" class="tool-buttons" aria-label="Drawing tools">
+            <button class="tool-btn selected" data-tool="pen" type="button" title="Pen">✎</button>
+            <button class="tool-btn" data-tool="eraser" type="button" title="Eraser">⌫</button>
+            <button class="tool-btn" data-tool="bucket" type="button" title="Bucket Fill">🪣</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel preview-panel">
+        <h2>Live Preview (100%)</h2>
+        <div class="preview-grid">
+          <div>
+            <label>16×16</label>
+            <canvas id="preview16" width="16" height="16"></canvas>
+          </div>
+          <div>
+            <label>32×32</label>
+            <canvas id="preview32" width="32" height="32"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <footer class="panel footer-note">
+        Tip: this app exports an ICO file containing exactly two images (16×16 and 32×32) as PNG frames.
+      </footer>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
