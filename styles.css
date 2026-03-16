@@ -93,25 +93,63 @@ button:active,
 .palette-panel h3 { margin: 0 0 0.5rem; font-size: 0.9rem; }
 
 .editor-canvas {
-  --pixel-size: 16px;
-  --checker-size: 8px;
   display: block;
   image-rendering: pixelated;
   cursor: crosshair;
-  border: 1px solid #000;
-  background:
-    linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-    repeating-conic-gradient(#f6f6f6 0% 25%, #cfcfcf 0% 50%) 0 0 / var(--checker-size) var(--checker-size);
-  background-size: var(--pixel-size) var(--pixel-size), var(--pixel-size) var(--pixel-size), var(--checker-size) var(--checker-size);
+  background: transparent;
 }
 
-#canvas16 { width: 256px !important; height: 256px !important; min-width: 256px; min-height: 256px; }
-#canvas32 { width: 512px !important; height: 512px !important; min-width: 512px; min-height: 512px; }
+.editor-stage {
+  --pixel-size: 16px;
+  --checker-size: 12px;
+  position: relative;
+  border: 1px solid #000;
+  overflow: hidden;
+}
 
-body.grid-off .editor-canvas {
+.editor-stage > .checkerboard,
+.editor-stage > .pixel-grid,
+.editor-stage > .editor-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.editor-stage > .checkerboard {
+  pointer-events: none;
+  z-index: 0;
+  background: repeating-conic-gradient(#efefef 0% 25%, #cecece 0% 50%) 0 0 / var(--checker-size) var(--checker-size);
+  background-size: var(--checker-size) var(--checker-size);
+}
+
+.editor-stage > .editor-canvas {
+  z-index: 1;
+}
+
+.editor-stage > .pixel-grid {
+  pointer-events: none;
+  z-index: 2;
   background:
-    repeating-conic-gradient(#f6f6f6 0% 25%, #cfcfcf 0% 50%) 0 0 / var(--checker-size) var(--checker-size);
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(var(--pixel-size) - 1px),
+      #000 calc(var(--pixel-size) - 1px),
+      #000 var(--pixel-size)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--pixel-size) - 1px),
+      #000 calc(var(--pixel-size) - 1px),
+      #000 var(--pixel-size)
+    );
+}
+
+#stage16 { width: 256px; height: 256px; }
+#stage32 { width: 512px; height: 512px; }
+
+body.grid-off .editor-stage > .pixel-grid {
+  display: none;
 }
 
 .palette-grid {
@@ -177,10 +215,10 @@ body.grid-off .editor-canvas {
 .footer-note { font-size: 0.8rem; }
 
 @media (max-width: 1260px) {
-  #canvas32 { width: 384px !important; height: 384px !important; min-width: 384px; min-height: 384px; }
+  .editor-columns { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 1024px) {
   .workspace { grid-template-columns: 1fr; }
-  #canvas32 { width: 512px !important; height: 512px !important; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; }
+  #stage32 { width: 256px; height: 256px; }
 }
