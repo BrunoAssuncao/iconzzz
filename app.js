@@ -110,10 +110,10 @@ function initialize() {
 }
 
 function enforceEditorCanvasDisplaySize() {
-  stage16.style.width = "256px";
-  stage16.style.height = "256px";
-  stage32.style.width = "512px";
-  stage32.style.height = "512px";
+  stage16.style.width = "258px";
+  stage16.style.height = "258px";
+  stage32.style.width = "514px";
+  stage32.style.height = "514px";
 }
 
 function syncEditorCanvasBackgroundScale() {
