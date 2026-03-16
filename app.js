@@ -47,6 +47,8 @@ function initialize() {
   bindEditor(canvas16, ctx16, 16);
   bindEditor(canvas32, ctx32, 32);
 
+  enforceEditorCanvasDisplaySize();
+
   window.addEventListener("mouseup", () => {
     state.drawing = false;
   });
@@ -100,6 +102,13 @@ function initialize() {
   document.getElementById("downloadPng32Btn").addEventListener("click", () => downloadCanvasPng(canvas32, "icon-32.png"));
 
   updatePreview();
+}
+
+function enforceEditorCanvasDisplaySize() {
+  canvas16.style.width = "256px";
+  canvas16.style.height = "256px";
+  canvas32.style.width = "512px";
+  canvas32.style.height = "512px";
 }
 
 function bindToolButtons() {
