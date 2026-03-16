@@ -46,8 +46,8 @@ function initialize() {
   renderClassicPalette();
   renderCustomPalette();
   bindToolButtons();
-  bindEditor(canvas16, ctx16, 16);
-  bindEditor(canvas32, ctx32, 32);
+  bindEditor(stage16, canvas16, ctx16, 16);
+  bindEditor(stage32, canvas32, ctx32, 32);
 
   enforceEditorCanvasDisplaySize();
   syncEditorCanvasBackgroundScale();
@@ -143,7 +143,7 @@ function bindToolButtons() {
   });
 }
 
-function bindEditor(canvas, ctx, size) {
+function bindEditor(stage, canvas, ctx, size) {
   const applyTool = (event, isStart = false) => {
     const { x, y } = getPixelCoordinates(canvas, event, size);
     if (x < 0 || y < 0 || x >= size || y >= size) return;
@@ -167,18 +167,23 @@ function bindEditor(canvas, ctx, size) {
     updatePreview();
   };
 
-  canvas.addEventListener("mousedown", (event) => {
+  stage.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    stage.setPointerCapture(event.pointerId);
     if (state.tool !== "bucket") {
       state.drawing = true;
     }
     applyTool(event, true);
   });
 
-  canvas.addEventListener("mousemove", (event) => applyTool(event));
-  canvas.addEventListener("mouseup", () => {
+  stage.addEventListener("pointermove", (event) => applyTool(event));
+  stage.addEventListener("pointerup", () => {
     state.drawing = false;
   });
-  canvas.addEventListener("mouseleave", () => {
+  stage.addEventListener("pointercancel", () => {
+    state.drawing = false;
+  });
+  stage.addEventListener("pointerleave", () => {
     state.drawing = false;
   });
 }

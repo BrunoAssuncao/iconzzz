@@ -107,6 +107,7 @@ button:active,
   position: relative;
   border: 1px solid #000;
   overflow: hidden;
+  touch-action: none;
 }
 
 .editor-stage > .checkerboard,
@@ -177,8 +178,9 @@ body.grid-off .editor-stage > .pixel-grid {
 
 .palette-swatch.selected,
 .custom-swatch.selected {
-  outline: none;
-  box-shadow: inset 0 0 0 2px #ff0, 0 0 0 1px #000;
+  outline: 2px solid #ff0;
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 1px #000;
 }
 
 .custom-controls {
