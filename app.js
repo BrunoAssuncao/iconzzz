@@ -7,8 +7,8 @@ const preview32 = document.getElementById("preview32");
 
 const ctx16 = canvas16.getContext("2d", { willReadFrequently: true });
 const ctx32 = canvas32.getContext("2d", { willReadFrequently: true });
-const pctx16 = preview16.getContext("2d");
-const pctx32 = preview32.getContext("2d");
+const pctx16 = preview16.getContext("2d", { alpha: true });
+const pctx32 = preview32.getContext("2d", { alpha: true });
 
 const paletteEl = document.getElementById("palette");
 const customPaletteEl = document.getElementById("customPalette");
@@ -48,6 +48,9 @@ function initialize() {
   bindEditor(canvas32, ctx32, 32);
 
   enforceEditorCanvasDisplaySize();
+  syncEditorCanvasBackgroundScale();
+
+  window.addEventListener("resize", syncEditorCanvasBackgroundScale);
 
   window.addEventListener("mouseup", () => {
     state.drawing = false;
@@ -109,6 +112,22 @@ function enforceEditorCanvasDisplaySize() {
   canvas16.style.height = "256px";
   canvas32.style.width = "512px";
   canvas32.style.height = "512px";
+}
+
+function syncEditorCanvasBackgroundScale() {
+  syncCanvasBackgroundScale(canvas16, 16);
+  syncCanvasBackgroundScale(canvas32, 32);
+}
+
+function syncCanvasBackgroundScale(canvas, size) {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const pixelSize = rect.width / size;
+  const checkerSize = Math.max(2, pixelSize / 2);
+
+  canvas.style.setProperty("--pixel-size", `${pixelSize}px`);
+  canvas.style.setProperty("--checker-size", `${checkerSize}px`);
 }
 
 function bindToolButtons() {
