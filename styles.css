@@ -93,6 +93,8 @@ button:active,
 .palette-panel h3 { margin: 0 0 0.5rem; font-size: 0.9rem; }
 
 .editor-canvas {
+  --pixel-size: 16px;
+  --checker-size: 8px;
   display: block;
   image-rendering: pixelated;
   cursor: crosshair;
@@ -100,8 +102,8 @@ button:active,
   background:
     linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-    repeating-conic-gradient(#f0f0f0 0% 25%, #dbdbdb 0% 50%) 0 0 / 16px 16px;
-  background-size: 16px 16px, 16px 16px, 16px 16px;
+    repeating-conic-gradient(#f6f6f6 0% 25%, #cfcfcf 0% 50%) 0 0 / var(--checker-size) var(--checker-size);
+  background-size: var(--pixel-size) var(--pixel-size), var(--pixel-size) var(--pixel-size), var(--checker-size) var(--checker-size);
 }
 
 #canvas16 { width: 256px !important; height: 256px !important; min-width: 256px; min-height: 256px; }
@@ -109,7 +111,7 @@ button:active,
 
 body.grid-off .editor-canvas {
   background:
-    repeating-conic-gradient(#f0f0f0 0% 25%, #dbdbdb 0% 50%) 0 0 / 16px 16px;
+    repeating-conic-gradient(#f6f6f6 0% 25%, #cfcfcf 0% 50%) 0 0 / var(--checker-size) var(--checker-size);
 }
 
 .palette-grid {
@@ -169,7 +171,7 @@ body.grid-off .editor-canvas {
 .preview-grid canvas {
   border: 1px solid #000;
   image-rendering: pixelated;
-  background: repeating-conic-gradient(#f0f0f0 0% 25%, #dbdbdb 0% 50%) 0 0 / 4px 4px;
+  background: repeating-conic-gradient(#f6f6f6 0% 25%, #cfcfcf 0% 50%) 0 0 / 4px 4px;
 }
 
 .footer-note { font-size: 0.8rem; }
