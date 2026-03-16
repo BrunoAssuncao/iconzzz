@@ -44,11 +44,22 @@ body {
   margin-bottom: 0.75rem;
 }
 
+.toolbar {
+  position: relative;
+}
+
 .toolbar .controls-row {
   display: flex;
   gap: 0.5rem;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.toolbar .controls-row.last {
+    display: inline-block;
+    position: absolute;
+    right: 12px;
+    top: 10px;
 }
 
 button:not(.palette-swatch):not(.custom-swatch),
@@ -64,7 +75,7 @@ input[type="color"] {
 
 button:active,
 .tool-btn.selected {
-  border-color: var(--panel-dark) var(--panel-light) var(--panel-light) var(--panel-dark);
+  border-color: var(--panel-dark) var(--panel-light) var(--panel-light) var(--panel-dark) !important;
   background: #c8c3bb;
 }
 
