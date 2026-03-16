@@ -51,7 +51,7 @@ body {
   flex-wrap: wrap;
 }
 
-button,
+button:not(.palette-swatch):not(.custom-swatch),
 select,
 input[type="color"] {
   font-family: inherit;
@@ -94,6 +94,8 @@ button:active,
 
 .editor-canvas {
   display: block;
+  width: 100%;
+  height: 100%;
   image-rendering: pixelated;
   cursor: crosshair;
   background: transparent;
@@ -167,12 +169,17 @@ body.grid-off .editor-stage > .pixel-grid {
 .custom-swatch {
   width: 16px;
   height: 16px;
+  padding: 0;
   border: 1px solid #000;
   cursor: pointer;
+  appearance: none;
 }
 
 .palette-swatch.selected,
-.custom-swatch.selected { outline: 2px solid #ff0; outline-offset: 1px; }
+.custom-swatch.selected {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #ff0, 0 0 0 1px #000;
+}
 
 .custom-controls {
   display: flex;
